@@ -51,6 +51,9 @@ initGL :: proc() {
 	for !glfw.WindowShouldClose(window) && !should_exit {
 		gl.ClearColor(1.0, 0.0, 1.0, 1.0)
 		gl.Clear(gl.COLOR_BUFFER_BIT) // clear with the color set above
+		//gl.Enable(gl.DEPTH_TEST)
+		//gl.Enable(gl.CULL_FACE)
+		
 
 		glfw.SwapBuffers(window)
 		glfw.PollEvents()
