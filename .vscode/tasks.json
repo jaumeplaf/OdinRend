@@ -14,7 +14,7 @@
 		{
 			"label": "Run Odin",
 			"type": "shell",
-			"command": "odin run .",
+			"command": "odin run . -debug",
 			"group": "build",
 			"problemMatcher": []
 		}
