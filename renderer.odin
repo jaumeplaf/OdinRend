@@ -8,16 +8,15 @@ import gl "vendor:OpenGL"
 GL_MAJOR_VERSION :: 4
 GL_MINOR_VERSION :: 1
 
+exit_application := false
 
-should_exit := false
-
-initGL :: proc() {
+initGL :: proc() -> glfw.WindowHandle {
 	fmt.println("Initializing OpenGL")
 
 
 	if glfw.Init() != glfw.TRUE {
 		fmt.println("Failed to initialize GLFW")
-		return
+		return nil
 	}
 	defer glfw.Terminate()
 
@@ -33,7 +32,7 @@ initGL :: proc() {
 
 	if window == nil {
 		fmt.println("Unable to create window")
-		return
+		return nil
 	}
 
 	glfw.MakeContextCurrent(window)
@@ -47,22 +46,38 @@ initGL :: proc() {
 	glfw.SetFramebufferSizeCallback(window, framebuffer_size_callback)
 
 	gl.load_up_to(GL_MAJOR_VERSION, GL_MINOR_VERSION, glfw.gl_set_proc_address)
+	
+	// Check for errors after loading OpenGL functions
+    if err := gl.GetError(); err != gl.NO_ERROR {
+        fmt.printf("OpenGL error after loading functions: %d\n", err)
+        return nil
+    }
 
-	for !glfw.WindowShouldClose(window) && !should_exit {
-		gl.ClearColor(1.0, 0.0, 1.0, 1.0)
-		gl.Clear(gl.COLOR_BUFFER_BIT) // clear with the color set above
-		//gl.Enable(gl.DEPTH_TEST)
-		//gl.Enable(gl.CULL_FACE)
-		
+	
+	draw(window)
 
-		glfw.SwapBuffers(window)
-		glfw.PollEvents()
-	}
+	return window
 }
+
+//Graphic loop
+draw :: proc(window: glfw.WindowHandle) {
+	gl.ClearColor(1.0, 0.0, 1.0, 1.0)
+	gl.Clear(gl.COLOR_BUFFER_BIT) // clear with the color set above		
+
+	glfw.SwapBuffers(window)
+	glfw.PollEvents()
+	fmt.println("context", glfw.GetCurrentContext())
+}
+
+
+
+
+
+//Event callbacks
 
 key_callback :: proc "c" (window: glfw.WindowHandle, key, scancode, action, mods: i32) {
 	if key == glfw.KEY_ESCAPE && action == glfw.PRESS {
-		should_exit = true
+		exit_application = true
 	}
 }
 
