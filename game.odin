@@ -14,12 +14,12 @@ tick :: proc(debug: bool) {
 }
 
 //Combined loop
-gameLoop :: proc(window: glfw.WindowHandle) {
-    for !glfw.WindowShouldClose(window) && !exit_application {
+gameLoop :: proc() {
+    for !glfw.WindowShouldClose(GAME_WINDOW) && !exit_application {
         tick(false) //Logic loop
-        draw(window) //Draw loop
+        draw() //Draw loop
     }
-    cleanup(window) //Destroy window & context
+    cleanup() //Destroy window & context
 }
 
 
