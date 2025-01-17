@@ -4,6 +4,8 @@ import "core:fmt"
 import "core:time"
 import "vendor:glfw"
 
+//Game lifecycle
+
 //Combined loop
 gameLoop :: proc() {
 

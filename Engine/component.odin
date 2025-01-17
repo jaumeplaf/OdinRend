@@ -8,7 +8,8 @@ import gl "vendor:OpenGL"
 ComponentManager :: struct {
     transforms : map[entity_id]Transform,
     static_meshes : map[entity_id]StaticMesh,
-    lights : map[entity_id]Light
+    lights : map[entity_id]Light,
+    cameras : map[entity_id]Camera
 }
 
 //Components
@@ -20,7 +21,7 @@ Transform :: struct {
 StaticMesh :: struct {
     mesh : Shape,
     //vertices/indices/normals/colors/texcoords
-    material : string,
+    material : Material,
     buffer_vertices : u32,
     buffer_indices : u32,
     buffer_normals : u32,
@@ -32,6 +33,20 @@ Light :: struct {
     la, ld, ls : m.vec3,
     intensity : f32,
     radius : f32
+}
+
+Camera :: struct {
+    fov: f32,
+    position: m.vec3,
+    target: m.vec3,
+    forward_vec: m.vec3,
+    up_vec: m.vec3,
+    right_vec: m.vec3,
+    yaw: f32,
+    pitch: f32,
+    max_pitch : f32,
+    view_matrix: m.mat4,
+    projection_matrix: m.mat4
 }
 
 //Add components procedures
@@ -54,7 +69,7 @@ componentTransformInit :: proc(manager : ^ComponentManager, id : entity_id, posi
 }
 
 //Initialize static mesh component
-componentStaticMesh :: proc(manager : ^ComponentManager, id : entity_id, mesh : Shape, material : string){
+componentStaticMesh :: proc(manager : ^ComponentManager, id : entity_id, mesh : Shape, material : Material){
     static_mesh := StaticMesh{}
     static_mesh.mesh = mesh
     static_mesh.material = material
@@ -81,13 +96,31 @@ initMeshBuffers :: proc(manager: ^ComponentManager, id: entity_id){
 }
 
 //Change material of static mesh component
-componentMaterial :: proc(manager : ^ComponentManager, id : entity_id, material : string){
+componentMaterial :: proc(manager : ^ComponentManager, id : entity_id, material : Material){
     static_mesh := manager.static_meshes[id]
     static_mesh.material = material
     manager.static_meshes[id] = static_mesh
 }
 
-initStaticMesh :: proc(manager: ^ComponentManager, id: entity_id, mesh: Shape, material: string){
+initStaticMesh :: proc(manager: ^ComponentManager, id: entity_id, mesh: Shape, material: Material){
     componentTransform(manager, id)
     componentStaticMesh(manager, id, mesh, material)
 }
+
+initCamera :: proc(manager: ^ComponentManager, id: entity_id, fov: f32, position: m.vec3, target: m.vec3) -> Camera {
+    camera := Camera{}
+    camera.position = position
+    camera.target = target
+    camera.forward_vec = m.normalize(target - position) 
+    camera.up_vec = WORLD_UP_VEC
+    camera.right_vec = m.normalize(m.cross(camera.forward_vec, camera.up_vec))
+    camera.yaw = -90.0
+    camera.pitch = 0.0
+    camera.max_pitch = m.PI / 2.0 - 0.01
+    setViewMatrix(&camera)
+    setProjectionMatrix(&camera, fov, ASPECT_RATIO)
+
+    manager.cameras[id] = camera
+    return camera
+}
+

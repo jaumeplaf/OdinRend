@@ -6,6 +6,7 @@ import "core:time"
 import "base:runtime"
 import "vendor:glfw"
 import gl "vendor:OpenGL"
+import m "core:math/linalg/glsl"
 
 //Initialize OpenGL and create window
 initGL :: proc(width : i32 = 800, height : i32 = 600) {
@@ -32,6 +33,8 @@ initGL :: proc(width : i32 = 800, height : i32 = 600) {
 		fmt.println("Unable to create window")
 		return
 	}
+
+	ASPECT_RATIO = getAspectRatio_i32(width, height)
 	
 	// Load OpenGL functions
 
@@ -66,6 +69,9 @@ initGL :: proc(width : i32 = 800, height : i32 = 600) {
 initUniforms :: proc(){
 	//Initialize uniforms
 	//TODO
+	//m.mat4 modelMatrix;
+	//m.mat4 viewMatrix;
+	//m.mat4 projectionMatrix;
 }
 
 updateUniforms :: proc(){
