@@ -1,25 +1,29 @@
-package OdinRend
+package Engine
 
 import "core:fmt"
 import "core:time"
 import "vendor:glfw"
 
-//Logic loop
-tick :: proc(debug: bool) {
-    calc_time(debug)
-}
-
 //Combined loop
 gameLoop :: proc() {
 
     for !glfw.WindowShouldClose(GAME_WINDOW) && !EXIT_APPLICATION {
-        tick(true) //Logic loop
-        draw() //Draw loop
+        //Logic loop
+        tick(false) 
+        //Draw loop
+        draw() 
     }
-    cleanup() //Destroy window & context
+    //Destroy window & context
+    cleanup() 
 }
 
-calc_time :: proc(debug : bool){
+//Logic loop
+tick :: proc(debug: bool) {
+    calcTime(debug)
+}
+
+//Calculate time variables
+calcTime :: proc(debug : bool){
 
     PREV_TIME = NOW_TIME
     NOW_TIME = time.now()

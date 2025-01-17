@@ -1,4 +1,4 @@
-package OdinRend
+package Engine
 
 import "core:fmt"
 import "core:c"
@@ -7,14 +7,16 @@ import "base:runtime"
 import "vendor:glfw"
 import gl "vendor:OpenGL"
 
+//Initialize OpenGL and create window
 initGL :: proc(width : i32 = 800, height : i32 = 600) {
-	fmt.println("Initializing OpenGL")
 
+	//Initialize OpenGL
 	if glfw.Init() != glfw.TRUE {
 		fmt.println("Failed to initialize GLFW")
 		return
 	}
 
+	//Window hints
 	glfw.WindowHint(glfw.RESIZABLE, glfw.TRUE)
 	glfw.WindowHint(glfw.OPENGL_FORWARD_COMPAT, glfw.TRUE)
 	glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
@@ -24,38 +26,51 @@ initGL :: proc(width : i32 = 800, height : i32 = 600) {
 	//MacOS specific hints
 	glfw.InitHint(glfw.WAYLAND_LIBDECOR, glfw.WAYLAND_PREFER_LIBDECOR)
 
+	//Create window + context
 	GAME_WINDOW = glfw.CreateWindow(width, height, "OdinRend", nil, nil)
 	if GAME_WINDOW == nil {
 		fmt.println("Unable to create window")
 		return
 	}
+	
+	// Load OpenGL functions
 
-	START_TIME = time.now()
-
-	fmt.println("Window created successfully")
-
+	//Set context
 	glfw.MakeContextCurrent(GAME_WINDOW)
-
-	// Enable vsync
+	//Enable depth test
+	gl.Enable(gl.DEPTH_TEST)
+	//Enable vsync
 	glfw.SwapInterval(1)
-
-	glfw.SetKeyCallback(GAME_WINDOW, key_callback)
-	glfw.SetMouseButtonCallback(GAME_WINDOW, mouse_callback)
-	glfw.SetCursorPosCallback(GAME_WINDOW, cursor_position_callback)
-	glfw.SetFramebufferSizeCallback(GAME_WINDOW, framebuffer_size_callback)
-
+	//Enable callbacks
+	glfw.SetKeyCallback(GAME_WINDOW, keyCallback)
+	glfw.SetMouseButtonCallback(GAME_WINDOW, mouseCallback)
+	glfw.SetCursorPosCallback(GAME_WINDOW, cursorPositionCallback)
+	glfw.SetFramebufferSizeCallback(GAME_WINDOW, framebufferSizeCallback)
+	//Set OpenGL version
 	gl.load_up_to(GL_MAJOR_VERSION, GL_MINOR_VERSION, glfw.gl_set_proc_address)
 
-	// Check for errors after loading OpenGL functions
+	//Check for errors after loading OpenGL functions
 	if err := gl.GetError(); err != gl.NO_ERROR {
 		fmt.println("OpenGL error after loading functions: %d\n", err)
 		return
 	}
 
-	//Init time
+	//Initialize time
 	START_TIME = time.now()
 
 	return
+}
+
+
+
+initUniforms :: proc(){
+	//Initialize uniforms
+	//TODO
+}
+
+updateUniforms :: proc(){
+	//Update uniforms
+	//TODO
 }
 
 //Graphic loop

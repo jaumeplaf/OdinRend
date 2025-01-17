@@ -1,10 +1,21 @@
-package OdinRend
+package Engine
 
 import "core:fmt"
 
 Shape :: struct {
     vertices: []f32,
-    indices: []u32,
+    indices: []u32
+}
+
+s_triangle := Shape{
+    vertices = []f32{
+        0.0,  0.5, 0.0,
+        0.5, -0.5, 0.0,
+       -0.5, -0.5, 0.0
+    },
+    indices = []u32{
+        0, 1, 2
+    },
 }
 
 s_plane := Shape{

@@ -1,0 +1,20 @@
+#PROCEDURES - camelCase
+    newProcedure :: proc(){
+        foo, bar : bool
+    }
+
+#STRUCTS/TYPES/INTERFACES - PascalCase
+    NewStruct :: Struct{
+        foo, basr : bool
+    }
+
+#VARIABLES - snake_case -> file scope
+    new_var : bool
+
+#GLOBAL VARIABLES - SCREAMING_SNAKE_CASE -> accessible from all files
+    NEW_GLOBAL_VAR : bool
+
+#ENUMERATION: name00->nameNN
+    foo01 : bool
+    foo02 : bool
+    bar01 : bool
