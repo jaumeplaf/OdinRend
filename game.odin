@@ -15,6 +15,7 @@ gameLoop :: proc(window: glfw.WindowHandle) {
         tick(false)
         draw(window)
     }
+    cleanup(window)
 }
 
 //Logic loop

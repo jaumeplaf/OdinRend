@@ -10,5 +10,4 @@ main :: proc() {
 
 	gameWindow := initGL()
 	gameLoop(gameWindow)
-	//gameLoop()
 }

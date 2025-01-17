@@ -18,7 +18,7 @@ initGL :: proc() -> glfw.WindowHandle {
 		fmt.println("Failed to initialize GLFW")
 		return nil
 	}
-	defer glfw.Terminate()
+	//defer glfw.Terminate()
 
 	glfw.WindowHint(glfw.RESIZABLE, glfw.TRUE)
 	glfw.WindowHint(glfw.OPENGL_FORWARD_COMPAT, glfw.TRUE)
@@ -28,7 +28,7 @@ initGL :: proc() -> glfw.WindowHandle {
 
 	window := glfw.CreateWindow(640, 480, "OdinRend", nil, nil)
     fmt.println("Window created")
-	defer glfw.DestroyWindow(window)
+	//defer glfw.DestroyWindow(window)
 
 	if window == nil {
 		fmt.println("Unable to create window")
@@ -66,11 +66,12 @@ draw :: proc(window: glfw.WindowHandle) {
 
 	glfw.SwapBuffers(window)
 	glfw.PollEvents()
-	fmt.println("context", glfw.GetCurrentContext())
 }
 
-
-
+cleanup :: proc(window: glfw.WindowHandle) {
+	glfw.DestroyWindow(window)
+	glfw.Terminate()
+}
 
 
 //Event callbacks
