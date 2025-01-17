@@ -7,7 +7,7 @@ import "base:runtime"
 import "vendor:glfw"
 import gl "vendor:OpenGL"
 
-initGL :: proc() {
+initGL :: proc(width : i32 = 800, height : i32 = 600) {
 	fmt.println("Initializing OpenGL")
 
 	if glfw.Init() != glfw.TRUE {
@@ -24,7 +24,7 @@ initGL :: proc() {
 	//MacOS specific hints
 	glfw.InitHint(glfw.WAYLAND_LIBDECOR, glfw.WAYLAND_PREFER_LIBDECOR)
 
-	GAME_WINDOW = glfw.CreateWindow(640, 480, "OdinRend", nil, nil)
+	GAME_WINDOW = glfw.CreateWindow(width, height, "OdinRend", nil, nil)
 	if GAME_WINDOW == nil {
 		fmt.println("Unable to create window")
 		return

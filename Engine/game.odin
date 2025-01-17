@@ -13,7 +13,7 @@ tick :: proc(debug: bool) {
 gameLoop :: proc() {
 
     for !glfw.WindowShouldClose(GAME_WINDOW) && !EXIT_APPLICATION {
-        tick(false) //Logic loop
+        tick(true) //Logic loop
         draw() //Draw loop
     }
     cleanup() //Destroy window & context

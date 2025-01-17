@@ -1,2 +1,2 @@
 # OdinRend
- Odin OpenGL renderer test
+ Odin OpenGL 4.1 renderer test, compatible for windows and macOS
