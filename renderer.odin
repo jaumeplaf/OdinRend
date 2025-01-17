@@ -11,6 +11,7 @@ GL_MINOR_VERSION :: 1
 
 exit_application := false
 
+
 initGL :: proc() -> glfw.WindowHandle {
 	fmt.println("Initializing OpenGL")
 
