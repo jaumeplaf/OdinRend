@@ -2,6 +2,7 @@ package OdinRend
 
 import "core:fmt"
 import "core:c"
+import "base:runtime"
 import "vendor:glfw"
 import gl "vendor:OpenGL"
 
@@ -18,7 +19,6 @@ initGL :: proc() -> glfw.WindowHandle {
 		fmt.println("Failed to initialize GLFW")
 		return nil
 	}
-	//defer glfw.Terminate()
 
 	glfw.WindowHint(glfw.RESIZABLE, glfw.TRUE)
 	glfw.WindowHint(glfw.OPENGL_FORWARD_COMPAT, glfw.TRUE)
@@ -28,7 +28,6 @@ initGL :: proc() -> glfw.WindowHandle {
 
 	window := glfw.CreateWindow(640, 480, "OdinRend", nil, nil)
     fmt.println("Window created")
-	//defer glfw.DestroyWindow(window)
 
 	if window == nil {
 		fmt.println("Unable to create window")
@@ -49,7 +48,7 @@ initGL :: proc() -> glfw.WindowHandle {
 	
 	// Check for errors after loading OpenGL functions
     if err := gl.GetError(); err != gl.NO_ERROR {
-        fmt.printf("OpenGL error after loading functions: %d\n", err)
+        fmt.println("OpenGL error after loading functions: %d\n", err)
         return nil
     }
 
@@ -82,10 +81,23 @@ key_callback :: proc "c" (window: glfw.WindowHandle, key, scancode, action, mods
 	}
 }
 
-mouse_callback :: proc "c" (window: glfw.WindowHandle, button, action, mods: i32) {}
+mouse_callback :: proc "c" (window: glfw.WindowHandle, button, action, mods: i32) {
+	context = runtime.default_context()
+	fmt.println("Mouse clicked!")
+}
 
-cursor_position_callback :: proc "c" (window: glfw.WindowHandle, xpos, ypos: f64) {}
+cursor_position_callback :: proc "c" (window: glfw.WindowHandle, xpos, ypos: f64) {
+	context = runtime.default_context()
+	fmt.println("Mouse moved to: ", xpos, ypos)
+}
 
-scroll_callback :: proc "c" (window: glfw.WindowHandle, xoffset, yoffset: f64) {}
+scroll_callback :: proc "c" (window: glfw.WindowHandle, xoffset, yoffset: f64) {
+	context = runtime.default_context()
+	fmt.println("Scrolling: ", "x-", xoffset, "y-", yoffset)
+}
 
-framebuffer_size_callback :: proc "c" (window: glfw.WindowHandle, width, height: i32) {}
+framebuffer_size_callback :: proc "c" (window: glfw.WindowHandle, width, height: i32) {
+	context = runtime.default_context()
+	fmt.println("Framebuffer resized: ", "w-", width, "h-", height)
+
+}
