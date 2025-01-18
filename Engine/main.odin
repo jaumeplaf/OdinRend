@@ -3,13 +3,15 @@ import m "core:math/linalg/glsl"
 
 
 main :: proc() {
+    //Initialize pre-game
     construct(800, 600)
+    //Get scene entities
     scene01 := initScene01()
+    //Run game loop
     run(&scene01)
 }
 
 initScene01 :: proc() -> Scene {
-
     //Initialize managers and scene
     entity_manager01 : EntityManager
     component_manager01 : ComponentManager
@@ -24,10 +26,10 @@ initScene01 :: proc() -> Scene {
         m.vec3{0.0, 0.0, 3.0},  //position
         m.vec3{0.0, 0.0, 0.0}   //target
     )
-
     
-    //Initialize shaders and materials
+    //Initialize shaders
     sha_base01 := initShader("../Shaders/vs_base01.glsl", "../Shaders/fs_base01.glsl")
+    //Initialize materials
     mat_red01 := initMaterial(&sha_base01, m.vec3{1.0, 0.0, 0.0})
     mat_blue01 := initMaterial(&sha_base01, m.vec3{0.0, 0.0, 1.0})
 

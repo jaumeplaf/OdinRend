@@ -14,7 +14,8 @@ ComponentManager :: struct {
 
 //Components
 Transform :: struct {
-    position, rotation, scale : m.vec3
+    position, rotation, scale : m.vec3,
+    model_matrix : m.mat4
 }
 
 
@@ -57,14 +58,39 @@ componentTransform :: proc(manager : ^ComponentManager, id : entity_id){
     transform.position = m.vec3{0.0, 0.0, 0.0}
     transform.rotation = m.vec3{0.0, 0.0, 0.0}
     transform.scale = m.vec3{1.0, 1.0, 1.0}
+    transform.model_matrix = m.identity(m.mat4)
     manager.transforms[id] = transform
 }
 //Initialize transform component with custom values
-componentTransformInit :: proc(manager : ^ComponentManager, id : entity_id, position : m.vec3, rotation : m.vec3, scale : m.vec3){
+componentTransformInit :: proc(manager : ^ComponentManager, id : entity_id, position : m.vec3, rotation : f32, axis : m.vec3, scale : m.vec3){
     transform := Transform{}
+    transform.model_matrix = m.identity(m.mat4)
     transform.position = position
     transform.rotation = rotation
     transform.scale = scale
+    //Set model matrix
+    transform.model_matrix = m.mat4Translate(transform.position) * m.mat4Scale(transform.scale)
+    transform.model_matrix = transform.model_matrix * m.mat4Rotate(axis, m.radians_f32(rotation))
+
+    manager.transforms[id] = transform
+}
+
+transformRotate :: proc(manager : ^ComponentManager, id : entity_id, rotation : f32, axis : m.vec3){
+    transform := manager.transforms[id]
+    transform.rotation = rotation
+    //Set model matrix
+    transform.model_matrix = transform.model_matrix * m.mat4Rotate(axis, m.radians_f32(rotation))
+
+    manager.transforms[id] = transform
+}
+
+transformTranslateScale :: proc(manager : ^ComponentManager, id : entity_id, position : m.vec3, scale : m.vec3){
+    transform := manager.transforms[id]
+    transform.position = position
+    transform.scale = scale
+    //Set model matrix
+    transform.model_matrix = m.mat4Translate(transform.position) * m.mat4Scale(transform.scale)
+
     manager.transforms[id] = transform
 }
 
@@ -77,22 +103,22 @@ componentStaticMesh :: proc(manager : ^ComponentManager, id : entity_id, mesh : 
     initMeshBuffers(manager, id)
 }
 initMeshBuffers :: proc(manager: ^ComponentManager, id: entity_id){
-    entity := manager.static_meshes[id]
+    mesh := manager.static_meshes[id]
     //Vertices
-    gl.BindBuffer(gl.ARRAY_BUFFER, entity.buffer_vertices)
-    gl.BufferData(gl.ARRAY_BUFFER, len(entity.mesh.vertices), &entity.mesh.vertices, gl.STATIC_DRAW)
+    gl.BindBuffer(gl.ARRAY_BUFFER, mesh.buffer_vertices)
+    gl.BufferData(gl.ARRAY_BUFFER, len(mesh.mesh.vertices), &mesh.mesh.vertices, gl.STATIC_DRAW)
     //Indices
-    gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, entity.buffer_indices)
-    gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(entity.mesh.indices), &entity.mesh.indices, gl.STATIC_DRAW)
+    gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.buffer_indices)
+    gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(mesh.mesh.indices), &mesh.mesh.indices, gl.STATIC_DRAW)
     ////Normals
-    //gl.BindBuffer(gl.ARRAY_BUFFER, entity.buffer_normals)
-    //gl.BufferData(gl.ARRAY_BUFFER, len(entity.mesh.normals), &entity.mesh.normals, gl.STATIC_DRAW)
+    //gl.BindBuffer(gl.ARRAY_BUFFER, mesh.buffer_normals)
+    //gl.BufferData(gl.ARRAY_BUFFER, len(mesh.mesh.normals), &mesh.mesh.normals, gl.STATIC_DRAW)
     ////Colors
-    //gl.BindBuffer(gl.ARRAY_BUFFER, entity.buffer_colors)
-    //gl.BufferData(gl.ARRAY_BUFFER, len(entity.mesh.colors), &entity.mesh.colors, gl.STATIC_DRAW)
+    //gl.BindBuffer(gl.ARRAY_BUFFER, mesh.buffer_colors)
+    //gl.BufferData(gl.ARRAY_BUFFER, len(mesh.mesh.colors), &mesh.mesh.colors, gl.STATIC_DRAW)
     ////Texcoords
-    //gl.BindBuffer(gl.ARRAY_BUFFER, entity.buffer_texcoords)
-    //gl.BufferData(gl.ARRAY_BUFFER, len(entity.mesh.texcoords), &entity.mesh.texcoords, gl.STATIC_DRAW)
+    //gl.BindBuffer(gl.ARRAY_BUFFER, mesh.buffer_texcoords)
+    //gl.BufferData(gl.ARRAY_BUFFER, len(mesh.mesh.texcoords), &mesh.mesh.texcoords, gl.STATIC_DRAW)
 }
 
 //Change material of static mesh component
@@ -105,6 +131,21 @@ componentMaterial :: proc(manager : ^ComponentManager, id : entity_id, material 
 initStaticMesh :: proc(manager: ^ComponentManager, id: entity_id, mesh: Shape, material: Material){
     componentTransform(manager, id)
     componentStaticMesh(manager, id, mesh, material)
+}
+
+updateModelMatrixUniform :: proc(manager: ^ComponentManager, id: entity_id){
+    transform := manager.transforms[id]
+    model_matrix := transform.model_matrix
+    prog := manager.static_meshes[id].material.shader.program
+    gl.UniformMatrix4fv(prog.model_matrix, 1, false, &model_matrix[0][0])
+}
+
+updateViewMatrixUniform :: proc(){
+    //TODO: implement
+}
+
+updateProjectionMatrixUniform :: proc(){
+    //TODO: implement
 }
 
 initCamera :: proc(manager: ^ComponentManager, id: entity_id, fov: f32, position: m.vec3, target: m.vec3) -> Camera {

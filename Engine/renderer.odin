@@ -64,21 +64,6 @@ initGL :: proc(width : i32 = 800, height : i32 = 600) {
 	return
 }
 
-
-
-initUniforms :: proc(){
-	//Initialize uniforms
-	//TODO
-	//m.mat4 modelMatrix;
-	//m.mat4 viewMatrix;
-	//m.mat4 projectionMatrix;
-}
-
-updateUniforms :: proc(){
-	//Update uniforms
-	//TODO
-}
-
 //Graphic loop
 draw :: proc() {
 	gl.ClearColor(1.0, 0.0, 1.0, 1.0)
