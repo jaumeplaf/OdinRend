@@ -6,7 +6,7 @@ import gl "vendor:OpenGL"
 
 Material :: struct {
     shader : ^Shader,
-    //texture : ^Texture
+    color: m.vec4
 }
 
 Shader :: struct {
@@ -20,7 +20,8 @@ Program :: struct {
     indices : u32,
     model_matrix : i32,
     view_matrix : i32,
-    projection_matrix : i32
+    projection_matrix : i32,
+    color : i32
 }
 
 initShader :: proc(vs_source: string, fs_source: string) -> Shader {
@@ -43,18 +44,21 @@ initUniforms :: proc(shader: ^Shader){
 	gl.EnableVertexAttribArray(program.vertex_position)
     gl.EnableVertexAttribArray(program.indices)
     //Init uniforms
-    gl.GetUniformLocation(program.prog, "model_matrix")
-    gl.GetUniformLocation(program.prog, "view_matrix")
-    gl.GetUniformLocation(program.prog, "projection_matrix")
+    program.model_matrix = gl.GetUniformLocation(program.prog, "model_matrix")
+    program.view_matrix = gl.GetUniformLocation(program.prog, "view_matrix")
+    program.projection_matrix = gl.GetUniformLocation(program.prog, "projection_matrix")
+    program.color = gl.GetUniformLocation(program.prog, "color")
 }
 
-updateUniforms :: proc(shader: ^Shader){
-    //gl.UniformMatrix4fv(shader.program.model_matrix, 1, false, false, &model_matrix)
+updateUniforms :: proc(mat: ^Material){
+    gl.Uniform4fv(mat.shader.program.color, 1, &mat.color[0])
 }
 
 
 initMaterial :: proc(shader: ^Shader, color: m.vec3) -> Material {
     mat := Material{}
     mat.shader = shader
+    mat.color = m.vec4{color.x, color.y, color.z, 1.0}
+    updateUniforms(&mat)
     return mat
 }

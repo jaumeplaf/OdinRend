@@ -6,12 +6,6 @@ import m "core:math/linalg/glsl"
 //Entity: game actor that has an ID, can have components and can be manipulated by systems
 entity_id :: u32
 
-EntityManager :: struct {
-    alive : map[entity_id]bool,
-    next_id : entity_id
-    //can implement a list of freed IDs to reuse, in case of particles or other short-lived entities
-}
-
 //Manage entities
 entityCreate :: proc(manager : ^EntityManager) -> entity_id {
     id := manager.next_id

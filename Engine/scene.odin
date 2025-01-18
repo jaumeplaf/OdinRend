@@ -5,6 +5,7 @@ import "core:fmt"
 Scene :: struct {
     entities : ^EntityManager,
     components : ^ComponentManager,
+    events : ^EventManager,
     name : string
 }
 
