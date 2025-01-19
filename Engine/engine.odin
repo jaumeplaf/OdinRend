@@ -10,7 +10,10 @@ construct :: proc(width: i32, height: i32) {
 
 run :: proc(scene: ^Scene) {
 	fmt.println("Starting game!")
-	gameLoop()
+	entities := scene.entities
+	components := scene.components
+	events := scene.events
+	gameLoop(entities, components, events)
 }
 
 initManagers :: proc() -> (EntityManager, ComponentManager) {

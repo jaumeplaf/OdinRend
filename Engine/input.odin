@@ -37,7 +37,7 @@ scrollCallback :: proc "c" (window: glfw.WindowHandle, xoffset, yoffset: f64) {
 
 framebufferSizeCallback :: proc "c" (window: glfw.WindowHandle, width, height: i32) {
 	context = runtime.default_context()
-	fmt.println("Framebuffer resized: ", "w-", width, "h-", height)
+	//fmt.println("Framebuffer resized: ", "w-", width, "h-", height)
 	ASPECT_RATIO = getAspectRatio_i32(width, height)
 	RESIZE_WINDOW = true //this initializes the RESIZE_WINDOW event	
 }

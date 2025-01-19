@@ -48,9 +48,12 @@ initMeshBuffers :: proc(manager: ^ComponentManager, id: entity_id){
     //gl.BufferData(gl.ARRAY_BUFFER, len(mesh.mesh.texcoords), &mesh.mesh.texcoords, gl.STATIC_DRAW)
 }
 
-initStaticMesh :: proc(manager: ^ComponentManager, id: entity_id, mesh: Shape, material: Material){
-    componentTransform(manager, id)
-    componentStaticMesh(manager, id, mesh, material)
+initStaticMesh :: proc(components: ^ComponentManager, entities: ^EntityManager, 
+    mesh: Shape, material: Material) -> StaticMesh{
+    id := entityCreate(entities)
+    componentTransform(components, id)
+    componentStaticMesh(components, id, mesh, material)
+    return components.static_meshes[id]
 }
 
 //Change material of static mesh component

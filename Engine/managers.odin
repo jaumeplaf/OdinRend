@@ -15,7 +15,7 @@ ComponentManager :: struct {
     static_meshes : map[entity_id]StaticMesh,
     lights : map[entity_id]Light,
     cameras : map[entity_id]Camera,
-    players : map[entity_id]Player,
+    players : map[entity_id]Player
 }
 
 EventManager :: struct {

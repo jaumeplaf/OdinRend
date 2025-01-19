@@ -7,26 +7,28 @@ import "vendor:glfw"
 //Game lifecycle
 
 //Combined loop
-gameLoop :: proc() {
+gameLoop :: proc(entities : ^EntityManager, components : ^ComponentManager, events : ^EventManager) {
 
     for !glfw.WindowShouldClose(GAME_WINDOW) && !EXIT_APPLICATION {
         //Logic loop
-        tick(false) 
+        tick(entities, components, events) 
         //Draw loop
-        draw() 
+        draw(entities, components, events) 
     }
     //Destroy window & context
     cleanup() 
 }
 
 //Logic loop
-tick :: proc(debug: bool) {
-    calcTime(debug)
+tick :: proc(entities : ^EntityManager, components : ^ComponentManager, events : ^EventManager) {
+    player := components.players[0]
+    calcTime()
+    updatePlayerPosition(&player)
 }
 
 //Calculate time variables
-calcTime :: proc(debug : bool){
-
+calcTime :: proc(){
+    debug := false
     PREV_TIME = NOW_TIME
     NOW_TIME = time.now()
 

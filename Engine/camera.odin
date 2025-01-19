@@ -19,8 +19,10 @@ Camera :: struct {
 }
 
 
-initCamera :: proc(manager: ^ComponentManager, id: entity_id, fov: f32, position: m.vec3, target: m.vec3) -> Camera {
+initCamera :: proc(components: ^ComponentManager, entities: ^EntityManager, fov: f32, position: m.vec3, target: m.vec3) -> Camera {
+    id := entityCreate(entities)
     camera := Camera{}
+    //TODO: replace position, yaw, pitch with Transform component
     camera.position = position
     camera.target = target
     camera.forward_vec = m.normalize(target - position) 
@@ -32,7 +34,11 @@ initCamera :: proc(manager: ^ComponentManager, id: entity_id, fov: f32, position
     setViewMatrix(&camera)
     setProjectionMatrix(&camera, fov, ASPECT_RATIO)
 
-    manager.cameras[id] = camera
+    player01 := initPlayer(components, entities, &camera)
+
+    components.cameras[id] = camera
+    components.players[id] = player01
+
     return camera
 }
 
@@ -58,25 +64,4 @@ setViewMatrix :: proc(camera: ^Camera){
 
 setProjectionMatrix :: proc(camera: ^Camera, fov: f32, aspect_ratio: f32){
     camera.projection_matrix = m.mat4Perspective(m.radians_f32(fov), aspect_ratio, 0.1, 100.0) 
-}
-
-updateModelMatrixUniform :: proc(manager: ^ComponentManager, id: entity_id){
-    transform := manager.transforms[id]
-    model_matrix := transform.model_matrix
-    prog := manager.static_meshes[id].material.shader.program
-    gl.UniformMatrix4fv(prog.model_matrix, 1, false, &model_matrix[0][0])
-}
-
-updateViewMatrixUniform :: proc(manager : ^ComponentManager, id : entity_id){
-    transform := manager.transforms[id]
-    view_matrix := manager.cameras[id].view_matrix
-    prog := manager.static_meshes[id].material.shader.program
-    gl.UniformMatrix4fv(prog.view_matrix, 1, false, &view_matrix[0][0])
-}
-
-updateProjectionMatrixUniform :: proc(manager : ^ComponentManager, id : entity_id){
-    transform := manager.transforms[id]
-    projection_matrix := manager.cameras[id].projection_matrix
-    prog := manager.static_meshes[id].material.shader.program
-    gl.UniformMatrix4fv(prog.projection_matrix, 1, false, &projection_matrix[0][0])
 }

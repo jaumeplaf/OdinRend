@@ -44,5 +44,7 @@ eventResizeWindow :: proc(components : ^ComponentManager){
         setProjectionMatrix(&camera, camera.fov, ASPECT_RATIO)
     }
 
+    //fmt.println("Framebuffer resized!")
+
     RESIZE_WINDOW = false //reset event
 }
