@@ -39,6 +39,5 @@ framebufferSizeCallback :: proc "c" (window: glfw.WindowHandle, width, height: i
 	context = runtime.default_context()
 	fmt.println("Framebuffer resized: ", "w-", width, "h-", height)
 	ASPECT_RATIO = getAspectRatio_i32(width, height)
-	setProjectionMatrix()//requires camera component
-
+	RESIZE_WINDOW = true //this initializes the RESIZE_WINDOW event	
 }

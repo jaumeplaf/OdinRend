@@ -3,16 +3,20 @@ package Engine
 import "core:fmt"
 
 Scene :: struct {
+    name : string,
     entities : ^EntityManager,
     components : ^ComponentManager,
-    events : ^EventManager,
-    name : string
+    events : ^EventManager
 }
 
-initScene :: proc(name: string, entity_manager: ^EntityManager, component_manager: ^ComponentManager) -> Scene {
+initScene :: proc(name: string, entities: ^EntityManager, components: ^ComponentManager, events : ^EventManager) -> Scene {
     scene := Scene{}
-    scene.entities = entity_manager
-    scene.components = component_manager
     scene.name = name
+    scene.entities = entities
+    scene.components = components
+    scene.events = events
+
+    initializeEvents(scene.events, scene.entities, scene.components)
+
     return scene
 }

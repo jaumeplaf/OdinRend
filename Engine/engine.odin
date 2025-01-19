@@ -2,7 +2,7 @@ package Engine
 
 import "core:fmt"
 
-
+//Initialize the game engine
 construct :: proc(width: i32, height: i32) {
 	fmt.println("Hellope! Initializing context")
 	initGL(width, height)
