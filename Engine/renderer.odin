@@ -8,6 +8,9 @@ import "vendor:glfw"
 import gl "vendor:OpenGL"
 import m "core:math/linalg/glsl"
 
+
+//check out: https://github.com/odin-lang/examples/blob/master/opengl/minimal_sdl2/sdl2_opengl_demo.odin
+
 //Initialize OpenGL and create window
 initGL :: proc(width : i32 = 800, height : i32 = 600) {
 
