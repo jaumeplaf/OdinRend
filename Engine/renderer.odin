@@ -26,10 +26,12 @@ initGL :: proc(width : i32 = 800, height : i32 = 600) {
 	glfw.WindowHint(glfw.OPENGL_PROFILE, glfw.OPENGL_CORE_PROFILE)
 	glfw.WindowHint(glfw.CONTEXT_VERSION_MAJOR, GL_MAJOR_VERSION)
 	glfw.WindowHint(glfw.CONTEXT_VERSION_MINOR, GL_MINOR_VERSION) 
+	when ODIN_OS == .Darwin {  // Needed for macOS
+        glfw.WindowHint(glfw.OPENGL_FORWARD_COMPAT, 1)
+		glfw.InitHint(glfw.WAYLAND_LIBDECOR, glfw.WAYLAND_PREFER_LIBDECOR)
 
-	//MacOS specific hints
-	glfw.InitHint(glfw.WAYLAND_LIBDECOR, glfw.WAYLAND_PREFER_LIBDECOR)
-
+    }
+	
 	//Create window + context
 	GAME_WINDOW = glfw.CreateWindow(width, height, "OdinRend", nil, nil)
 	if GAME_WINDOW == nil {
@@ -74,8 +76,6 @@ initGL :: proc(width : i32 = 800, height : i32 = 600) {
 		return
 	}
 
-
-
 	//Initialize time
 	START_TIME = time.now()
 
@@ -89,17 +89,36 @@ draw :: proc(entities: ^EntityManager, components: ^ComponentManager, events: ^E
 
 	glfw.SwapBuffers(GAME_WINDOW)
 	glfw.PollEvents()
-
+	fmt.println("Clear")
 	//Draw all StaticMesh components
-	for entity_id, static_mesh in components.static_meshes {
-		camera := components.cameras[0]
-		material := static_mesh.material
-		program := material.shader.program.prog
-		gl.UseProgram(program)
+	if len(components.static_meshes) == 0 {
+		fmt.println("No static meshes to draw")
+		return
+	}
+	else if components.static_meshes == nil {
+		fmt.println("Nil components")
+		return
+	}
+	else {	
+		for entity_id, static_mesh in components.static_meshes {
+			fmt.println("entity: %d", entity_id)
 
-		updateUniforms(components, entity_id)
+			camera := components.cameras[0]
+			material := static_mesh.material
+			program := material.shader.program.prog
+			gl.UseProgram(program)
 
-		drawTriangles(static_mesh)
+			fmt.println("use program")
+
+			updateUniforms(components, entity_id)
+
+			fmt.println("update uniforms")
+
+
+			drawTriangles(static_mesh)
+
+			fmt.println("draw triangles")
+		}
 	}
 }
 

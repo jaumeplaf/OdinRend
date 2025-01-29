@@ -11,9 +11,9 @@ gameLoop :: proc(entities : ^EntityManager, components : ^ComponentManager, even
 
     for !glfw.WindowShouldClose(GAME_WINDOW) && !EXIT_APPLICATION {
         //Logic loop
-        tick(entities, components, events) 
+        //tick(entities, components, events) 
         //Draw loop
-        draw(entities, components, events) 
+        //draw(entities, components, events) 
     }
     //Destroy window & context
     cleanup() 
@@ -21,9 +21,10 @@ gameLoop :: proc(entities : ^EntityManager, components : ^ComponentManager, even
 
 //Logic loop
 tick :: proc(entities : ^EntityManager, components : ^ComponentManager, events : ^EventManager) {
-    player := components.players[0]
-    calcTime()
-    updatePlayerPosition(&player)
+    //player := components.players[0]
+    //calcTime()
+    //updatePlayerPosition(&player)
+    fmt.println("Tick")
 }
 
 //Calculate time variables

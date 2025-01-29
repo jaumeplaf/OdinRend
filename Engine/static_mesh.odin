@@ -30,22 +30,33 @@ componentStaticMesh :: proc(manager : ^ComponentManager, id : entity_id, mesh : 
     initMeshBuffers(manager, id)
 }
 initMeshBuffers :: proc(manager: ^ComponentManager, id: entity_id){
-    mesh := manager.static_meshes[id]
+    model := manager.static_meshes[id]
+
+    // Generate buffers
+    gl.GenBuffers(1, &model.buffer_vertices)
+    gl.GenBuffers(1, &model.buffer_indices)
+    // gl.GenBuffers(1, &model.buffer_normals)
+    // gl.GenBuffers(1, &model.buffer_colors)
+    // gl.GenBuffers(1, &model.buffer_texcoords)
+
     //Vertices
-    gl.BindBuffer(gl.ARRAY_BUFFER, mesh.buffer_vertices)
-    gl.BufferData(gl.ARRAY_BUFFER, len(mesh.mesh.vertices), &mesh.mesh.vertices, gl.STATIC_DRAW)
+    gl.BindBuffer(gl.ARRAY_BUFFER, model.buffer_vertices)
+    gl.BufferData(gl.ARRAY_BUFFER, len(model.mesh.vertices) * size_of(f32), &model.mesh.vertices, gl.STATIC_DRAW)
     //Indices
-    gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, mesh.buffer_indices)
-    gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(mesh.mesh.indices), &mesh.mesh.indices, gl.STATIC_DRAW)
+    gl.BindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.buffer_indices)
+    gl.BufferData(gl.ELEMENT_ARRAY_BUFFER, len(model.mesh.indices) * size_of(f32), &model.mesh.indices, gl.STATIC_DRAW)
     ////Normals
-    //gl.BindBuffer(gl.ARRAY_BUFFER, mesh.buffer_normals)
-    //gl.BufferData(gl.ARRAY_BUFFER, len(mesh.mesh.normals), &mesh.mesh.normals, gl.STATIC_DRAW)
+    //gl.BindBuffer(gl.ARRAY_BUFFER, model.buffer_normals)
+    //gl.BufferData(gl.ARRAY_BUFFER, len(model.mesh.normals) * size_of(f32), &model.mesh.normals, gl.STATIC_DRAW)
     ////Colors
-    //gl.BindBuffer(gl.ARRAY_BUFFER, mesh.buffer_colors)
-    //gl.BufferData(gl.ARRAY_BUFFER, len(mesh.mesh.colors), &mesh.mesh.colors, gl.STATIC_DRAW)
+    //gl.BindBuffer(gl.ARRAY_BUFFER, model.buffer_colors)
+    //gl.BufferData(gl.ARRAY_BUFFER, len(model.mesh.colors) * size_of(f32), &model.mesh.colors, gl.STATIC_DRAW)
     ////Texcoords
-    //gl.BindBuffer(gl.ARRAY_BUFFER, mesh.buffer_texcoords)
-    //gl.BufferData(gl.ARRAY_BUFFER, len(mesh.mesh.texcoords), &mesh.mesh.texcoords, gl.STATIC_DRAW)
+    //gl.BindBuffer(gl.ARRAY_BUFFER, model.buffer_texcoords)
+    //gl.BufferData(gl.ARRAY_BUFFER, len(model.mesh.texcoords) * size_of(f32), &model.mesh.texcoords, gl.STATIC_DRAW)
+    
+    // Update the static mesh in the manager
+    manager.static_meshes[id] = model
 }
 
 initStaticMesh :: proc(components: ^ComponentManager, entities: ^EntityManager, 

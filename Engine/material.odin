@@ -1,6 +1,7 @@
 package Engine
 
 import "core:fmt"
+import "core:os"
 import m "core:math/linalg/glsl"
 import gl "vendor:OpenGL"
 
@@ -30,10 +31,28 @@ initShader :: proc(vs_source: string, fs_source: string) -> Shader {
     shader := Shader{}
     //Compile and link shaders
 
-    //TODO: fix shaders not loading!
-    shader.program.prog, shader.success = gl.load_shaders(vs_source, fs_source, false)
+    shader_dir := os.get_current_directory() // Get executable's directory
+
+    when ODIN_OS == .Darwin || ODIN_OS == .Linux  { //macOS and Linux use forward slashes
+        vert_path := fmt.tprintf("%s/shaders/%s", shader_dir, vs_source)
+        frag_path := fmt.tprintf("%s/shaders/%s", shader_dir, fs_source)
+    }
+    else{ //Windows uses backslashes
+        vert_path := fmt.tprintf("%s\\shaders\\%s", shader_dir, vs_source)
+        frag_path := fmt.tprintf("%s\\shaders\\%s", shader_dir, fs_source)
+    }
+
+    if !os.exists(vert_path) {
+        fmt.eprintln("Vertex shader not found at:", vert_path)
+    }
+    
+    if !os.exists(frag_path) {
+        fmt.eprintln("Fragment shader not found at:", frag_path)
+    }
+    
+    shader.program.prog, shader.success = gl.load_shaders_file(vert_path, frag_path)
     if !shader.success {
-        fmt.println("Failed to load shaders")
+        fmt.eprintln("Failed to load shaders at path:", vert_path, frag_path)
     }
     
     initUniforms(&shader)
